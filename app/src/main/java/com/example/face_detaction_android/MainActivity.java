@@ -31,6 +31,7 @@ import com.google.android.gms.vision.face.Landmark;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //imageArray = new int[]{R.drawable.sample_1, R.drawable.sample_2, R.drawable.sample_3};
         detector = new FaceDetector.Builder(getApplicationContext())
                 .setTrackingEnabled(false)
-                .setLandmarkType(FaceDetector.ALL_CLASSIFICATIONS)
+                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
                 .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
                 .setMode(FaceDetector.FAST_MODE)
                 .build();
@@ -135,25 +136,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        }
 //    }
 
-    private Bitmap decodeBitmapImage(int image) {
-        int targetW = 300;
-        int targetH = 300;
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-
-        BitmapFactory.decodeResource(getResources(), image,
-                bmOptions);
-
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-
-        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
-
-        return BitmapFactory.decodeResource(getResources(), image,
-                bmOptions);
-    }
+//    private Bitmap decodeBitmapImage(int image) {
+//        int targetW = 300;
+//        int targetH = 300;
+//        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+//        bmOptions.inJustDecodeBounds = true;
+//
+//        BitmapFactory.decodeResource(getResources(), image,
+//                bmOptions);
+//
+//        int photoW = bmOptions.outWidth;
+//        int photoH = bmOptions.outHeight;
+//
+//        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+//        bmOptions.inJustDecodeBounds = false;
+//        bmOptions.inSampleSize = scaleFactor;
+//
+//        return BitmapFactory.decodeResource(getResources(), image,
+//                bmOptions);
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -230,17 +231,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         face.getPosition().y + face.getHeight(), paint);
 
 
-                canvas.drawText("Face " + (index + 1), face.getPosition().x + face.getWidth(), face.getPosition().y + face.getHeight(), paint);
+//                canvas.drawText("Face " + (index + 1), face.getPosition().x + face.getWidth(), face.getPosition().y + face.getHeight(), paint);
 
                 txtTakenPicDesc.setText("FACE " + (index + 1) + "\n");
                 txtTakenPicDesc.setText(txtTakenPicDesc.getText() + "Smile probability:" + " " + face.getIsSmilingProbability() + "\n");
                 txtTakenPicDesc.setText(txtTakenPicDesc.getText() + "Left Eye Is Open Probability: " + " " + face.getIsLeftEyeOpenProbability() + "\n");
-                txtTakenPicDesc.setText(txtTakenPicDesc.getText() + "Right Eye Is Open Probability: " + " " + face.getIsRightEyeOpenProbability() + "\n\n");
+                txtTakenPicDesc.setText(txtTakenPicDesc.getText() + "Right Eye Is Open Probability: " + " " + face.getIsSmilingProbability() + "\n\n");
 
                 for (Landmark landmark : face.getLandmarks()) {
                     int cx = (int) (landmark.getPosition().x);
                     int cy = (int) (landmark.getPosition().y);
                     canvas.drawCircle(cx, cy, 8, paint);
+
+                    if(landmark.getType() == Landmark.LEFT_CHEEK || landmark.getType() == Landmark.RIGHT_CHEEK){
+                        int x = (int) (landmark.getPosition().x);
+                        int y = (int) (landmark.getPosition().y);
+
+                        canvas.drawCircle(x, y, 8, paint);
+                    }
                 }
 
 
